@@ -29,20 +29,21 @@ class ThemeProvider with ChangeNotifier {
     ),
   );
 
-  // Tema Oscuro (Basado en 'bg-slate-950 text-slate-100')
+  // Tema Oscuro (Ajustado a azul profundo en lugar de grises)
   static final ThemeData _darkTheme = ThemeData(
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: const Color(0xFF020617), // slate-950
-    primaryColor: const Color(0xFF1E3A8A), // blue-900
+    scaffoldBackgroundColor: const Color(0xFF070B19), // Fondo azul muy profundo
+    primaryColor: const Color(0xFF1E3A8A), // Acento azul
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFF3B82F6), // blue-500
       secondary: Color(0xFF60A5FA), // blue-400
-      surface: Color(0xFF0F172A), // slate-900
+      surface: Color(0xFF0D142B), // Superficie/tarjeta azul noche
     ),
-    cardColor: const Color(0xFF0F172A),
+    cardColor: const Color(0xFF0D142B),
     textTheme: const TextTheme(
       bodyLarge: TextStyle(color: Color(0xFFF1F5F9)), // slate-100
       bodyMedium: TextStyle(color: Color(0xFFE2E8F0)), // slate-200
     ),
+    dividerColor: const Color(0xFF1C284A), // Líneas divisorias con matiz azulado
   );
 }

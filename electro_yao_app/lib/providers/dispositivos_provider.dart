@@ -41,27 +41,28 @@ class DispositivosProvider with ChangeNotifier {
     return disp?.estado == 'Activo';
   }
 
+  // Obtener si el dispositivo está en modo manual
+  bool isDispositivoManual(String areaName) {
+    final disp = getDispositivoByArea(areaName);
+    return disp?.modo != 'Automático';
+  }
+
   // Actualizar el estado de un dispositivo en Supabase
   Future<void> toggleDispositivo(String areaName, bool isOn) async {
     final disp = getDispositivoByArea(areaName);
     if (disp == null) return;
 
+    // Validación estricta en el provider: no permite cambio si está en automático
+    if (disp.modo == 'Automático') {
+      print('Intento de cambio rechazado: El dispositivo $areaName está en modo Automático.');
+      return;
+    }
+
     final newState = isOn ? 'Activo' : 'Inactivo';
     
-    // Optimizamos la UI actualizando localmente antes de que llegue el evento del stream
-    final index = _dispositivos.indexWhere((d) => d.id == disp.id);
-    if (index != -1) {
-      // Creamos una copia actualizada localmente (Optimistic UI update)
-      _dispositivos[index] = Dispositivo(
-        id: disp.id,
-        nombreArea: disp.nombreArea,
-        tipoDispositivo: disp.tipoDispositivo,
-        estado: newState,
-        ubicacion: disp.ubicacion,
-        ultimaActualizacion: DateTime.now(),
-      );
-      notifyListeners();
-    }
+    // Eliminamos el Optimistic Update (modificación local prematura) para evitar el efecto 'ghosting'.
+    // Al solo enviar la actualización a Supabase, confiamos en que el .stream() 
+    // emitirá el nuevo estado exacto en tiempo real, garantizando sincronización bidireccional perfecta.
 
     try {
       await _client

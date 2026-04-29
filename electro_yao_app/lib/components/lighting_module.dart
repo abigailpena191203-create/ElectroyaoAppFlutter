@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/theme_provider.dart';
 import '../providers/dispositivos_provider.dart';
 
@@ -11,9 +12,6 @@ class LightingModule extends StatefulWidget {
 }
 
 class _LightingModuleState extends State<LightingModule> {
-  // Estado temporal local para el auto mode
-  bool _ventasAutoMode = true;
-  bool _almacenAutoMode = true;
 
   Widget _buildLightControl(
     BuildContext context, {
@@ -55,11 +53,14 @@ class _LightingModuleState extends State<LightingModule> {
                   ),
                 ],
               ),
-              Switch(
-                value: isOn,
-                onChanged: onToggle,
-                activeColor: Colors.yellow,
-                activeTrackColor: Colors.yellow.withOpacity(0.3),
+              Opacity(
+                opacity: isAutoMode ? 0.5 : 1.0,
+                child: Switch(
+                  value: isOn,
+                  onChanged: isAutoMode ? null : onToggle,
+                  activeColor: Colors.yellow,
+                  activeTrackColor: Colors.yellow.withOpacity(0.3),
+                ),
               ),
             ],
           ),
@@ -199,16 +200,21 @@ class _LightingModuleState extends State<LightingModule> {
     final isDark = themeProvider.isDarkMode;
 
     final ventasOn = dispProvider.isDispositivoOn('Área de Ventas');
+    final ventasManual = dispProvider.isDispositivoManual('Área de Ventas');
+    
     final almacenOn = dispProvider.isDispositivoOn('Almacén');
+    final almacenManual = dispProvider.isDispositivoManual('Almacén');
+    
     final cajaOn = dispProvider.isDispositivoOn('Caja');
+    final cajaManual = dispProvider.isDispositivoManual('Caja');
 
     return Card(
       elevation: isDark ? 0 : 4,
-      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+      color: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isDark ? const Color(0xFF334155).withOpacity(0.6) : Colors.grey.shade200,
+          color: isDark ? Theme.of(context).dividerColor : Colors.grey.shade200,
         ),
       ),
       child: Padding(
@@ -231,15 +237,20 @@ class _LightingModuleState extends State<LightingModule> {
               label: 'Área de Ventas',
               isOn: ventasOn,
               hasAutoMode: true,
-              isAutoMode: _ventasAutoMode,
+              isAutoMode: !ventasManual,
               isDark: isDark,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Área de Ventas', val);
               },
-              onAutoModeToggle: () {
-                setState(() {
-                  _ventasAutoMode = !_ventasAutoMode;
-                });
+              onAutoModeToggle: () async {
+                final disp = dispProvider.getDispositivoByArea('Área de Ventas');
+                if (disp != null) {
+                  final newMode = ventasManual ? 'Automático' : 'Manual';
+                  await Supabase.instance.client
+                      .from('t_dispositivos')
+                      .update({'modo': newMode})
+                      .eq('id', disp.id);
+                }
               },
             ),
             _buildLightControl(
@@ -248,15 +259,20 @@ class _LightingModuleState extends State<LightingModule> {
               label: 'Almacén',
               isOn: almacenOn,
               hasAutoMode: true,
-              isAutoMode: _almacenAutoMode,
+              isAutoMode: !almacenManual,
               isDark: isDark,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Almacén', val);
               },
-              onAutoModeToggle: () {
-                setState(() {
-                  _almacenAutoMode = !_almacenAutoMode;
-                });
+              onAutoModeToggle: () async {
+                final disp = dispProvider.getDispositivoByArea('Almacén');
+                if (disp != null) {
+                  final newMode = almacenManual ? 'Automático' : 'Manual';
+                  await Supabase.instance.client
+                      .from('t_dispositivos')
+                      .update({'modo': newMode})
+                      .eq('id', disp.id);
+                }
               },
             ),
             _buildLightControl(

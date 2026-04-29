@@ -13,14 +13,16 @@ class SecurityModule extends StatelessWidget {
     final isDark = themeProvider.isDarkMode;
 
     final isArmed = dispProvider.isDispositivoOn('Cerradura Electrónica');
+    final isManual = dispProvider.isDispositivoManual('Cerradura Electrónica');
+    final isAutoMode = !isManual;
 
     return Card(
       elevation: isDark ? 0 : 4,
-      color: isDark ? const Color(0xFF1E293B) : Colors.white,
+      color: Theme.of(context).cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isDark ? const Color(0xFF334155).withOpacity(0.6) : Colors.grey.shade200,
+          color: isDark ? Theme.of(context).dividerColor : Colors.grey.shade200,
         ),
       ),
       child: Padding(
@@ -39,17 +41,20 @@ class SecurityModule extends StatelessWidget {
                     color: isDark ? Colors.grey.shade100 : Colors.grey.shade900,
                   ),
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF0F172A).withOpacity(0.5) : Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Switch(
-                    value: isArmed,
-                    onChanged: (val) {
-                      dispProvider.toggleDispositivo('Cerradura Electrónica', val);
-                    },
-                    activeColor: Colors.redAccent,
+                Opacity(
+                  opacity: isAutoMode ? 0.5 : 1.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: isDark ? const Color(0xFF0F172A).withOpacity(0.5) : Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Switch(
+                      value: isArmed,
+                      onChanged: isAutoMode ? null : (val) {
+                        dispProvider.toggleDispositivo('Cerradura Electrónica', val);
+                      },
+                      activeColor: Colors.redAccent,
+                    ),
                   ),
                 ),
               ],

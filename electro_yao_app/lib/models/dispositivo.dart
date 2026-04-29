@@ -4,6 +4,7 @@ class Dispositivo {
   final String? tipoDispositivo;
   final String? estado;
   final String? ubicacion;
+  final String? modo;
   final DateTime? ultimaActualizacion;
 
   Dispositivo({
@@ -12,6 +13,7 @@ class Dispositivo {
     this.tipoDispositivo,
     this.estado,
     this.ubicacion,
+    this.modo,
     this.ultimaActualizacion,
   });
 
@@ -22,6 +24,7 @@ class Dispositivo {
       tipoDispositivo: json['tipo_dispositivo'] as String?,
       estado: json['Estado'] as String?,
       ubicacion: json['Ubicación'] as String?,
+      modo: json['modo'] as String?,
       ultimaActualizacion: json['ultima_actualizacion'] != null
           ? DateTime.parse(json['ultima_actualizacion'] as String)
           : null,
@@ -35,6 +38,7 @@ class Dispositivo {
       if (tipoDispositivo != null) 'tipo_dispositivo': tipoDispositivo,
       if (estado != null) 'Estado': estado,
       if (ubicacion != null) 'Ubicación': ubicacion,
+      if (modo != null) 'modo': modo,
       if (ultimaActualizacion != null)
         'ultima_actualizacion': ultimaActualizacion!.toIso8601String(),
     };
