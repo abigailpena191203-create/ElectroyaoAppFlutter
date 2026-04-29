@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../components/dashboard_header.dart';
 import '../components/dispositivos_list.dart';
+import '../components/lighting_module.dart';
+import '../components/security_module.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -22,10 +24,39 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // TODO: KPI Panel
-                  // TODO: Módulos (Iluminación, Seguridad, Plano del Local)
-                  // TODO: Gráficos y Logs de Eventos
+                  const Text(
+                    'Panel de Control',
+                    style: TextStyle(
+                      fontSize: 18, 
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   
+                  // Layout responsivo para módulos de control
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      if (constraints.maxWidth > 800) {
+                        return const Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 1, child: LightingModule()),
+                            SizedBox(width: 16),
+                            Expanded(flex: 1, child: SecurityModule()),
+                          ],
+                        );
+                      }
+                      return const Column(
+                        children: [
+                          LightingModule(),
+                          SizedBox(height: 16),
+                          SecurityModule(),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 32),
                   const Text(
                     'Vista Previa (Dispositivos en Supabase)',
                     style: TextStyle(

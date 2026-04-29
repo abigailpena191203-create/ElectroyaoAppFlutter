@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'config/constants.dart';
 import 'services/supabase_service.dart';
 import 'providers/theme_provider.dart';
+import 'providers/dispositivos_provider.dart';
 import 'screens/dashboard_screen.dart';
 
 void main() async {
@@ -19,6 +20,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => DispositivosProvider()),
       ],
       child: const ElectroYaoApp(),
     ),
