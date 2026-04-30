@@ -71,17 +71,24 @@ class SecurityModule extends StatelessWidget {
               alignment: Alignment.center,
               clipBehavior: Clip.none,
               children: [
-                Icon(
-                  Icons.vpn_key,
-                  size: 96,
-                  color: isArmed ? Colors.redAccent : Colors.greenAccent,
-                  shadows: [
-                    Shadow(
-                      color: (isArmed ? Colors.redAccent : Colors.greenAccent)
-                          .withValues(alpha: 0.7),
-                      blurRadius: 30,
-                    ),
-                  ],
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: (isArmed ? Colors.redAccent : Colors.greenAccent)
+                            .withValues(alpha: 0.5),
+                        blurRadius: 30,
+                        spreadRadius: 5,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.vpn_key,
+                    size: 96,
+                    color: isArmed ? Colors.redAccent : Colors.greenAccent,
+                  ),
                 ),
                 Positioned(
                   top: -10,

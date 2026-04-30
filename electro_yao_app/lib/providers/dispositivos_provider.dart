@@ -78,7 +78,7 @@ class DispositivosProvider with ChangeNotifier {
     try {
       await _client
           .from('t_dispositivos')
-          .update({'Estado': newState})
+          .update({'estado': newState})
           .eq('id', disp.id);
     } catch (e) {
       print('Error actualizando el dispositivo $areaName: $e');

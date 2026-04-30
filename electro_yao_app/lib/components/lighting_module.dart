@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import '../providers/theme_provider.dart';
 import '../providers/dispositivos_provider.dart';
 
@@ -207,20 +206,27 @@ class _LightingModuleState extends State<LightingModule> {
             ),
           const SizedBox(height: 8),
           Center(
-            child: Icon(
-              Icons.lightbulb,
-              size: 48,
-              color: isOn
-                  ? Colors.yellowAccent
-                  : (isDark ? Colors.grey.shade600 : Colors.grey.shade300),
-              shadows: isOn
-                  ? [
-                      Shadow(
-                        color: Colors.yellowAccent.withValues(alpha: 0.8),
-                        blurRadius: 20,
-                      ),
-                    ]
-                  : null,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: isOn
+                    ? [
+                        BoxShadow(
+                          color: Colors.yellowAccent.withValues(alpha: 0.6),
+                          blurRadius: 20,
+                          spreadRadius: 2,
+                        ),
+                      ]
+                    : [],
+              ),
+              child: Icon(
+                Icons.lightbulb,
+                size: 48,
+                color: isOn
+                    ? Colors.yellowAccent
+                    : (isDark ? Colors.grey.shade600 : Colors.grey.shade300),
+              ),
             ),
           ),
           const SizedBox(height: 8),
