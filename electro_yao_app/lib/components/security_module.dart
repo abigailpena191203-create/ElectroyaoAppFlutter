@@ -45,15 +45,22 @@ class SecurityModule extends StatelessWidget {
                   opacity: isAutoMode ? 0.5 : 1.0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0F172A).withOpacity(0.5) : Colors.grey.shade100,
+                      color: isDark
+                          ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                          : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Switch(
                       value: isArmed,
-                      onChanged: isAutoMode ? null : (val) {
-                        dispProvider.toggleDispositivo('Cerradura Electrónica', val);
-                      },
-                      activeColor: Colors.redAccent,
+                      onChanged: isAutoMode
+                          ? null
+                          : (val) {
+                              dispProvider.toggleDispositivo(
+                                'Cerradura Electrónica',
+                                val,
+                              );
+                            },
+                      activeThumbColor: Colors.redAccent,
                     ),
                   ),
                 ),
@@ -70,9 +77,10 @@ class SecurityModule extends StatelessWidget {
                   color: isArmed ? Colors.redAccent : Colors.greenAccent,
                   shadows: [
                     Shadow(
-                      color: (isArmed ? Colors.redAccent : Colors.greenAccent).withOpacity(0.7),
+                      color: (isArmed ? Colors.redAccent : Colors.greenAccent)
+                          .withValues(alpha: 0.7),
                       blurRadius: 30,
-                    )
+                    ),
                   ],
                 ),
                 Positioned(
@@ -81,7 +89,9 @@ class SecurityModule extends StatelessWidget {
                   child: Icon(
                     isArmed ? Icons.shield : Icons.gpp_bad,
                     size: 40,
-                    color: isArmed ? Colors.red.shade400 : Colors.green.shade400,
+                    color: isArmed
+                        ? Colors.red.shade400
+                        : Colors.green.shade400,
                   ),
                 ),
               ],
@@ -91,13 +101,21 @@ class SecurityModule extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
                 color: isArmed
-                    ? (isDark ? Colors.red.withOpacity(0.2) : Colors.red.shade50)
-                    : (isDark ? Colors.green.withOpacity(0.2) : Colors.green.shade50),
+                    ? (isDark
+                          ? Colors.red.withValues(alpha: 0.2)
+                          : Colors.red.shade50)
+                    : (isDark
+                          ? Colors.green.withValues(alpha: 0.2)
+                          : Colors.green.shade50),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
                   color: isArmed
-                      ? (isDark ? Colors.red.withOpacity(0.5) : Colors.red.shade300)
-                      : (isDark ? Colors.green.withOpacity(0.5) : Colors.green.shade300),
+                      ? (isDark
+                            ? Colors.red.withValues(alpha: 0.5)
+                            : Colors.red.shade300)
+                      : (isDark
+                            ? Colors.green.withValues(alpha: 0.5)
+                            : Colors.green.shade300),
                   width: 2,
                 ),
               ),
@@ -108,7 +126,9 @@ class SecurityModule extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: isArmed
                       ? (isDark ? Colors.red.shade400 : Colors.red.shade600)
-                      : (isDark ? Colors.green.shade400 : Colors.green.shade600),
+                      : (isDark
+                            ? Colors.green.shade400
+                            : Colors.green.shade600),
                 ),
               ),
             ),

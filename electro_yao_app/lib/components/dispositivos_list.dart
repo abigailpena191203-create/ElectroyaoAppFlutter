@@ -33,7 +33,7 @@ class _DispositivosListState extends State<DispositivosList> {
         }
 
         final dispositivos = snapshot.data!;
-        
+
         return ListView.builder(
           itemCount: dispositivos.length,
           itemBuilder: (context, index) {
@@ -41,27 +41,41 @@ class _DispositivosListState extends State<DispositivosList> {
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               elevation: 4,
-              shadowColor: Theme.of(context).brightness == Brightness.dark 
-                  ? Colors.blue.withOpacity(0.2) 
-                  : Colors.grey.withOpacity(0.3),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shadowColor: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.blue.withValues(alpha: 0.2)
+                  : Colors.grey.withValues(alpha: 0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               child: ListTile(
                 leading: const Icon(Icons.devices),
-                title: Text(disp.nombreArea, style: const TextStyle(fontWeight: FontWeight.bold)),
+                title: Text(
+                  disp.nombreArea,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 subtitle: Text(disp.ubicacion ?? 'Sin ubicación'),
                 trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: disp.estado == 'Activo' ? Colors.green.withOpacity(0.2) : Colors.grey.withOpacity(0.2),
+                    color: disp.estado == 'Activo'
+                        ? Colors.green.withValues(alpha: 0.2)
+                        : Colors.grey.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: disp.estado == 'Activo' ? Colors.green : Colors.grey,
-                    )
+                      color: disp.estado == 'Activo'
+                          ? Colors.green
+                          : Colors.grey,
+                    ),
                   ),
                   child: Text(
                     disp.estado ?? 'Desconocido',
                     style: TextStyle(
-                      color: disp.estado == 'Activo' ? Colors.green : Colors.grey,
+                      color: disp.estado == 'Activo'
+                          ? Colors.green
+                          : Colors.grey,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,
                     ),

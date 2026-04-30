@@ -62,11 +62,14 @@ class DashboardHeader extends StatelessWidget {
               ),
             ),
           ),
-          
+
           SafeArea(
             bottom: false,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 20.0,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -78,26 +81,39 @@ class DashboardHeader extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.white.withOpacity(0.2)),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 10,
                                 spreadRadius: 1,
-                              )
+                              ),
                             ],
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                              filter: ImageFilter.blur(
+                                sigmaX: 5.0,
+                                sigmaY: 5.0,
+                              ),
                               child: Stack(
                                 alignment: Alignment.bottomRight,
                                 children: [
-                                  Icon(Icons.memory, color: Colors.blue[200], size: 32),
-                                  const Icon(Icons.bolt, color: Colors.yellowAccent, size: 16),
+                                  Icon(
+                                    Icons.memory,
+                                    color: Colors.blue[200],
+                                    size: 32,
+                                  ),
+                                  const Icon(
+                                    Icons.bolt,
+                                    color: Colors.yellowAccent,
+                                    size: 16,
+                                  ),
                                 ],
                               ),
                             ),
@@ -122,12 +138,19 @@ class DashboardHeader extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 8),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 2,
+                                    ),
                                     decoration: BoxDecoration(
-                                      color: isDark ? Colors.blue.withOpacity(0.2) : Colors.white.withOpacity(0.2),
+                                      color: isDark
+                                          ? Colors.blue.withValues(alpha: 0.2)
+                                          : Colors.white.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: isDark ? Colors.blue.withOpacity(0.3) : Colors.transparent,
+                                        color: isDark
+                                            ? Colors.blue.withValues(alpha: 0.3)
+                                            : Colors.transparent,
                                       ),
                                     ),
                                     child: Text(
@@ -135,7 +158,9 @@ class DashboardHeader extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
-                                        color: isDark ? Colors.blue[400] : Colors.white,
+                                        color: isDark
+                                            ? Colors.blue[400]
+                                            : Colors.white,
                                         letterSpacing: 1.2,
                                       ),
                                     ),
@@ -145,7 +170,11 @@ class DashboardHeader extends StatelessWidget {
                               const SizedBox(height: 4),
                               Row(
                                 children: [
-                                  Icon(Icons.location_on, color: Colors.red[400], size: 14),
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.red[400],
+                                    size: 14,
+                                  ),
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
@@ -153,7 +182,9 @@ class DashboardHeader extends StatelessWidget {
                                       style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.white.withOpacity(0.9),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
                                         letterSpacing: 0.5,
                                       ),
                                       maxLines: 1,
@@ -168,19 +199,21 @@ class DashboardHeader extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   // Parte Derecha: Botón de Cambio de Tema
                   Container(
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E293B) : Colors.white.withOpacity(0.1),
+                      color: isDark
+                          ? const Color(0xFF1E293B)
+                          : Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: isDark
                           ? [
                               BoxShadow(
-                                color: Colors.yellow.withOpacity(0.1),
+                                color: Colors.yellow.withValues(alpha: 0.1),
                                 blurRadius: 10,
                                 spreadRadius: 1,
-                              )
+                              ),
                             ]
                           : [],
                     ),

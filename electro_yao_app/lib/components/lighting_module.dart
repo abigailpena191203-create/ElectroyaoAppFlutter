@@ -12,7 +12,6 @@ class LightingModule extends StatefulWidget {
 }
 
 class _LightingModuleState extends State<LightingModule> {
-
   Widget _buildLightControl(
     BuildContext context, {
     required IconData icon,
@@ -28,7 +27,9 @@ class _LightingModuleState extends State<LightingModule> {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F172A).withOpacity(0.5) : Colors.grey.shade50,
+        color: isDark
+            ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+            : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark ? const Color(0xFF334155) : Colors.grey.shade200,
@@ -42,13 +43,19 @@ class _LightingModuleState extends State<LightingModule> {
             children: [
               Row(
                 children: [
-                  Icon(icon, size: 20, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     label,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.grey.shade100 : Colors.grey.shade900,
+                      color: isDark
+                          ? Colors.grey.shade100
+                          : Colors.grey.shade900,
                     ),
                   ),
                 ],
@@ -58,8 +65,8 @@ class _LightingModuleState extends State<LightingModule> {
                 child: Switch(
                   value: isOn,
                   onChanged: isAutoMode ? null : onToggle,
-                  activeColor: Colors.yellow,
-                  activeTrackColor: Colors.yellow.withOpacity(0.3),
+                  activeThumbColor: Colors.yellow,
+                  activeTrackColor: Colors.yellow.withValues(alpha: 0.3),
                 ),
               ),
             ],
@@ -71,16 +78,27 @@ class _LightingModuleState extends State<LightingModule> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: isAutoMode
-                          ? (isDark ? Colors.blue.withOpacity(0.2) : Colors.blue.shade100)
-                          : (isDark ? Colors.orange.withOpacity(0.2) : Colors.orange.shade100),
+                          ? (isDark
+                                ? Colors.blue.withValues(alpha: 0.2)
+                                : Colors.blue.shade100)
+                          : (isDark
+                                ? Colors.orange.withValues(alpha: 0.2)
+                                : Colors.orange.shade100),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isAutoMode
-                            ? (isDark ? Colors.blue.withOpacity(0.3) : Colors.blue.shade300)
-                            : (isDark ? Colors.orange.withOpacity(0.3) : Colors.orange.shade300),
+                            ? (isDark
+                                  ? Colors.blue.withValues(alpha: 0.3)
+                                  : Colors.blue.shade300)
+                            : (isDark
+                                  ? Colors.orange.withValues(alpha: 0.3)
+                                  : Colors.orange.shade300),
                       ),
                     ),
                     child: Row(
@@ -89,8 +107,12 @@ class _LightingModuleState extends State<LightingModule> {
                           isAutoMode ? Icons.memory : Icons.back_hand,
                           size: 12,
                           color: isAutoMode
-                              ? (isDark ? Colors.blue.shade400 : Colors.blue.shade700)
-                              : (isDark ? Colors.orange.shade400 : Colors.orange.shade700),
+                              ? (isDark
+                                    ? Colors.blue.shade400
+                                    : Colors.blue.shade700)
+                              : (isDark
+                                    ? Colors.orange.shade400
+                                    : Colors.orange.shade700),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -99,8 +121,12 @@ class _LightingModuleState extends State<LightingModule> {
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             color: isAutoMode
-                                ? (isDark ? Colors.blue.shade400 : Colors.blue.shade700)
-                                : (isDark ? Colors.orange.shade400 : Colors.orange.shade700),
+                                ? (isDark
+                                      ? Colors.blue.shade400
+                                      : Colors.blue.shade700)
+                                : (isDark
+                                      ? Colors.orange.shade400
+                                      : Colors.orange.shade700),
                           ),
                         ),
                       ],
@@ -110,12 +136,19 @@ class _LightingModuleState extends State<LightingModule> {
                     onTap: onAutoModeToggle,
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.green.withOpacity(0.2) : Colors.green.shade100,
+                        color: isDark
+                            ? Colors.green.withValues(alpha: 0.2)
+                            : Colors.green.shade100,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: isDark ? Colors.green.withOpacity(0.4) : Colors.green.shade300,
+                          color: isDark
+                              ? Colors.green.withValues(alpha: 0.4)
+                              : Colors.green.shade300,
                         ),
                       ),
                       child: Text(
@@ -123,7 +156,9 @@ class _LightingModuleState extends State<LightingModule> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.green.shade400 : Colors.green.shade700,
+                          color: isDark
+                              ? Colors.green.shade400
+                              : Colors.green.shade700,
                         ),
                       ),
                     ),
@@ -135,22 +170,35 @@ class _LightingModuleState extends State<LightingModule> {
             Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF334155).withOpacity(0.5) : Colors.grey.shade200,
+                  color: isDark
+                      ? const Color(0xFF334155).withValues(alpha: 0.5)
+                      : Colors.grey.shade200,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.back_hand, size: 12, color: isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+                    Icon(
+                      Icons.back_hand,
+                      size: 12,
+                      color: isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade600,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'Solo Manual',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -168,9 +216,9 @@ class _LightingModuleState extends State<LightingModule> {
               shadows: isOn
                   ? [
                       Shadow(
-                        color: Colors.yellowAccent.withOpacity(0.8),
+                        color: Colors.yellowAccent.withValues(alpha: 0.8),
                         blurRadius: 20,
-                      )
+                      ),
                     ]
                   : null,
             ),
@@ -201,10 +249,10 @@ class _LightingModuleState extends State<LightingModule> {
 
     final ventasOn = dispProvider.isDispositivoOn('Área de Ventas');
     final ventasManual = dispProvider.isDispositivoManual('Área de Ventas');
-    
+
     final almacenOn = dispProvider.isDispositivoOn('Almacén');
     final almacenManual = dispProvider.isDispositivoManual('Almacén');
-    
+
     final cajaOn = dispProvider.isDispositivoOn('Caja');
     final cajaManual = dispProvider.isDispositivoManual('Caja');
 
@@ -243,14 +291,7 @@ class _LightingModuleState extends State<LightingModule> {
                 dispProvider.toggleDispositivo('Área de Ventas', val);
               },
               onAutoModeToggle: () async {
-                final disp = dispProvider.getDispositivoByArea('Área de Ventas');
-                if (disp != null) {
-                  final newMode = ventasManual ? 'Automático' : 'Manual';
-                  await Supabase.instance.client
-                      .from('t_dispositivos')
-                      .update({'modo': newMode})
-                      .eq('id', disp.id);
-                }
+                await dispProvider.toggleAutoMode('Área de Ventas');
               },
             ),
             _buildLightControl(
@@ -265,14 +306,7 @@ class _LightingModuleState extends State<LightingModule> {
                 dispProvider.toggleDispositivo('Almacén', val);
               },
               onAutoModeToggle: () async {
-                final disp = dispProvider.getDispositivoByArea('Almacén');
-                if (disp != null) {
-                  final newMode = almacenManual ? 'Automático' : 'Manual';
-                  await Supabase.instance.client
-                      .from('t_dispositivos')
-                      .update({'modo': newMode})
-                      .eq('id', disp.id);
-                }
+                await dispProvider.toggleAutoMode('Almacén');
               },
             ),
             _buildLightControl(

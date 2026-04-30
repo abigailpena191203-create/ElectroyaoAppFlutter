@@ -19,8 +19,19 @@ class DispositivosProvider with ChangeNotifier {
         .from('t_dispositivos')
         .stream(primaryKey: ['id'])
         .listen((List<Map<String, dynamic>> data) {
-      _dispositivos = data.map((item) => Dispositivo.fromJson(item)).toList();
-      notifyListeners();
+      try {
+        _dispositivos = data.map((item) {
+          try {
+            return Dispositivo.fromJson(item);
+          } catch (e) {
+            print('Error parseando dispositivo: $e en item: $item');
+            return null;
+          }
+        }).whereType<Dispositivo>().toList();
+        notifyListeners();
+      } catch (e) {
+        print('Error general procesando datos del stream: $e');
+      }
     }, onError: (error) {
       print('Error en el stream de dispositivos: $error');
     });
@@ -72,6 +83,24 @@ class DispositivosProvider with ChangeNotifier {
     } catch (e) {
       print('Error actualizando el dispositivo $areaName: $e');
       // Podríamos revertir el cambio local si falla
+    }
+  }
+
+  // Alternar el modo de un dispositivo (Manual / Automático)
+  Future<void> toggleAutoMode(String areaName) async {
+    final disp = getDispositivoByArea(areaName);
+    if (disp == null) return;
+
+    final isManual = disp.modo != 'Automático';
+    final newMode = isManual ? 'Automático' : 'Manual';
+
+    try {
+      await _client
+          .from('t_dispositivos')
+          .update({'modo': newMode})
+          .eq('id', disp.id);
+    } catch (e) {
+      print('Error actualizando el modo del dispositivo $areaName: $e');
     }
   }
 

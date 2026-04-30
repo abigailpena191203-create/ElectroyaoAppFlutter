@@ -19,14 +19,14 @@ class Dispositivo {
 
   factory Dispositivo.fromJson(Map<String, dynamic> json) {
     return Dispositivo(
-      id: json['id'] as String,
-      nombreArea: json['nombre_area'] as String,
-      tipoDispositivo: json['tipo_dispositivo'] as String?,
-      estado: json['Estado'] as String?,
-      ubicacion: json['Ubicación'] as String?,
-      modo: json['modo'] as String?,
+      id: (json['id'] ?? '').toString(),
+      nombreArea: (json['nombre_area'] ?? json['Nombre_area'] ?? 'Área Desconocida').toString(),
+      tipoDispositivo: json['tipo_dispositivo']?.toString() ?? json['Tipo_dispositivo']?.toString(),
+      estado: json['Estado']?.toString() ?? json['estado']?.toString(),
+      ubicacion: json['Ubicación']?.toString() ?? json['ubicacion']?.toString(),
+      modo: json['modo']?.toString() ?? json['Modo']?.toString(),
       ultimaActualizacion: json['ultima_actualizacion'] != null
-          ? DateTime.parse(json['ultima_actualizacion'] as String)
+          ? DateTime.tryParse(json['ultima_actualizacion'].toString())
           : null,
     );
   }

@@ -10,13 +10,13 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Se utiliza un Column en lugar de un AppBar tradicional para tener control 
+      // Se utiliza un Column en lugar de un AppBar tradicional para tener control
       // absoluto sobre el header personalizado que migramos desde React
       body: Column(
         children: [
           // 1. Header principal (Gradientes, título, modo oscuro)
           const DashboardHeader(),
-          
+
           // 2. Contenedor del Dashboard (Scrollable)
           Expanded(
             child: SingleChildScrollView(
@@ -27,13 +27,13 @@ class DashboardScreen extends StatelessWidget {
                   const Text(
                     'Panel de Control',
                     style: TextStyle(
-                      fontSize: 18, 
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Layout responsivo para módulos de control
                   LayoutBuilder(
                     builder: (context, constraints) {
@@ -60,22 +60,24 @@ class DashboardScreen extends StatelessWidget {
                   const Text(
                     'Vista Previa (Dispositivos en Supabase)',
                     style: TextStyle(
-                      fontSize: 18, 
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.5,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
+
                   // Temporalmente ponemos la lista de dispositivos dentro de un Container
-                  // ya que al usar un ListView dentro de un SingleChildScrollView, 
+                  // ya que al usar un ListView dentro de un SingleChildScrollView,
                   // necesitamos definir una altura o usar shrinkWrap.
                   Container(
                     height: 400,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: Theme.of(context).dividerColor.withOpacity(0.1),
+                        color: Theme.of(
+                          context,
+                        ).dividerColor.withValues(alpha: 0.1),
                       ),
                     ),
                     child: const ClipRRect(
@@ -83,7 +85,7 @@ class DashboardScreen extends StatelessWidget {
                       child: DispositivosList(),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32), // Espacio extra al final
                 ],
               ),
