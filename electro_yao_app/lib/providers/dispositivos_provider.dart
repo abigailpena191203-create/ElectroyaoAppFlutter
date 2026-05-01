@@ -73,16 +73,20 @@ class DispositivosProvider with ChangeNotifier {
     }
   }
 
-  // Obtener el estado booleano basado en el string "Activo" o "Inactivo"
+  // Obtener el estado booleano basado en el string
   bool isDispositivoOn(String areaName) {
     final disp = getDispositivoByArea(areaName);
-    return disp?.estado == 'Activo';
+    if (disp == null || disp.estado == null) return false;
+    final estadoStr = disp.estado!.toLowerCase().trim();
+    return estadoStr == 'activo' || estadoStr == 'encendido';
   }
 
   // Obtener si el dispositivo está en modo manual
   bool isDispositivoManual(String areaName) {
     final disp = getDispositivoByArea(areaName);
-    return disp?.modo != 'Automático';
+    if (disp == null || disp.modo == null) return true;
+    final modoStr = disp.modo!.toLowerCase().trim().replaceAll('á', 'a');
+    return modoStr != 'automatico';
   }
 
   // Actualizar el estado de un dispositivo en Supabase
@@ -91,7 +95,7 @@ class DispositivosProvider with ChangeNotifier {
     if (disp == null) return;
 
     // Validación estricta en el provider: no permite cambio si está en automático
-    if (disp.modo == 'Automático') {
+    if (!isDispositivoManual(areaName)) {
       print('Intento de cambio rechazado: El dispositivo $areaName está en modo Automático.');
       return;
     }
@@ -119,7 +123,7 @@ class DispositivosProvider with ChangeNotifier {
     final disp = getDispositivoByArea(areaName);
     if (disp == null) return;
 
-    final isManual = disp.modo != 'Automático';
+    final isManual = isDispositivoManual(areaName);
     final newMode = isManual ? 'Automático' : 'Manual';
 
     try {
