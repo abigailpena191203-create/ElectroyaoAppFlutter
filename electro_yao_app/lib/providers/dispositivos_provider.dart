@@ -92,27 +92,33 @@ class DispositivosProvider with ChangeNotifier {
 
   // Actualizar el estado de un dispositivo en Supabase
   Future<void> toggleDispositivo(String areaName, bool isOn) async {
+    print('💡 INTENTO DE TOGGLE en UI para: $areaName -> a estado isOn=$isOn');
     final disp = getDispositivoByArea(areaName);
-    if (disp == null) return;
+    if (disp == null) {
+      print('❌ ERROR: Dispositivo nulo para $areaName');
+      return;
+    }
 
     // Validación estricta en el provider: no permite cambio si está en automático
     if (!isDispositivoManual(areaName)) {
-      print('Intento de cambio rechazado: El dispositivo $areaName está en modo Automático.');
+      print('🛑 Intento de cambio rechazado: El dispositivo $areaName está en modo Automático.');
       return;
     }
 
     final newState = isOn ? 'Activo' : 'Inactivo';
     
     // Eliminamos el Optimistic Update (modificación local prematura) para evitar el efecto 'ghosting'.
-    // Al solo enviar la actualización a Supabase, confiamos en que el .stream() 
+    // Al solo enviar la actualización a Supabase, confiamos en que el .channel() 
     // emitirá el nuevo estado exacto en tiempo real, garantizando sincronización bidireccional perfecta.
 
     try {
+      print('🚀 ENVIANDO CAMBIO A SUPABASE: $newState para el dispositivo $areaName (ID: ${disp.id})');
       final response = await _client
           .from('t_dispositivos')
           .update({'estado': newState})
           .eq('id', disp.id)
-          .select();
+          .select()
+          .single();
       print('✅ CONFIRMACIÓN SUPABASE (ESTADO): $response');
     } catch (e) {
       print('❌ Error actualizando el dispositivo $areaName: $e');
@@ -121,18 +127,24 @@ class DispositivosProvider with ChangeNotifier {
 
   // Alternar el modo de un dispositivo (Manual / Automático)
   Future<void> toggleAutoMode(String areaName) async {
+    print('⚙️ INTENTO DE CAMBIO DE MODO para: $areaName');
     final disp = getDispositivoByArea(areaName);
-    if (disp == null) return;
+    if (disp == null) {
+      print('❌ ERROR: Dispositivo nulo para $areaName');
+      return;
+    }
 
     final isManual = isDispositivoManual(areaName);
     final newMode = isManual ? 'Automático' : 'Manual';
 
     try {
+      print('🚀 ENVIANDO CAMBIO DE MODO A SUPABASE: $newMode para el dispositivo $areaName (ID: ${disp.id})');
       final response = await _client
           .from('t_dispositivos')
           .update({'modo': newMode})
           .eq('id', disp.id)
-          .select();
+          .select()
+          .single();
       print('✅ CONFIRMACIÓN SUPABASE (MODO): $response');
     } catch (e) {
       print('❌ Error actualizando el modo del dispositivo $areaName: $e');
