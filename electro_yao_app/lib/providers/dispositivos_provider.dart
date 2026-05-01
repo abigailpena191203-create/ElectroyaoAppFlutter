@@ -34,18 +34,22 @@ class DispositivosProvider with ChangeNotifier {
       schema: 'public',
       table: 't_dispositivos',
       callback: (PostgresChangePayload payload) {
-        print('🔥 EVENTO EXTERNO PURO DE SUPABASE: ${payload.eventType}');
-        
-        try {
-          if (payload.eventType == PostgresChangeEvent.update) {
-            print('📦 Registro actualizado recibido: ${payload.newRecord}');
-            final newRecord = payload.newRecord;
-            final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
-            if (index != -1) {
-               _dispositivos[index] = Dispositivo.fromJson(newRecord);
+        if (payload.newRecord != null) {
+          print('📡 SEÑAL RECIBIDA DESDE NUBE: ${payload.newRecord}');
+          final newRecord = payload.newRecord!;
+          
+          try {
+            if (payload.eventType == PostgresChangeEvent.update) {
+              final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
+              if (index != -1) {
+                 _dispositivos[index] = Dispositivo.fromJson(newRecord);
+              }
+            } else if (payload.eventType == PostgresChangeEvent.insert) {
+              _dispositivos.add(Dispositivo.fromJson(newRecord));
+            } else if (payload.eventType == PostgresChangeEvent.delete) {
+              final oldRecord = payload.oldRecord;
+              _dispositivos.removeWhere((d) => d.id == oldRecord['id']);
             }
-          } else if (payload.eventType == PostgresChangeEvent.insert) {
-            _dispositivos.add(Dispositivo.fromJson(payload.newRecord));
           } else if (payload.eventType == PostgresChangeEvent.delete) {
             final oldRecord = payload.oldRecord;
             _dispositivos.removeWhere((d) => d.id == oldRecord['id']);
