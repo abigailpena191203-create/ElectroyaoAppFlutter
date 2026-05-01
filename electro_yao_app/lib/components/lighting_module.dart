@@ -259,8 +259,8 @@ class _LightingModuleState extends State<LightingModule> {
     final almacenOn = dispProvider.isDispositivoOn('Almacén');
     final almacenManual = dispProvider.isDispositivoManual('Almacén');
 
-    final cajaOn = dispProvider.isDispositivoOn('Caja');
-    final cajaManual = dispProvider.isDispositivoManual('Caja');
+    final cajaOn = dispProvider.isDispositivoOn('Caja/Oficina');
+    final cajaManual = dispProvider.isDispositivoManual('Caja/Oficina');
 
     return Card(
       elevation: isDark ? 0 : 4,
@@ -318,12 +318,16 @@ class _LightingModuleState extends State<LightingModule> {
             _buildLightControl(
               context,
               icon: Icons.attach_money,
-              label: 'Caja',
+              label: 'Caja/Oficina',
               isOn: cajaOn,
-              hasAutoMode: false,
+              hasAutoMode: true,
+              isAutoMode: !cajaManual,
               isDark: isDark,
               onToggle: (val) {
-                dispProvider.toggleDispositivo('Caja', val);
+                dispProvider.toggleDispositivo('Caja/Oficina', val);
+              },
+              onAutoModeToggle: () async {
+                await dispProvider.toggleAutoMode('Caja/Oficina');
               },
             ),
           ],

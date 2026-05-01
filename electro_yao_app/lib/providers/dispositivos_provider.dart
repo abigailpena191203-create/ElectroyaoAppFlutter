@@ -19,6 +19,7 @@ class DispositivosProvider with ChangeNotifier {
         .from('t_dispositivos')
         .stream(primaryKey: ['id'])
         .listen((List<Map<String, dynamic>> data) {
+      print('🔥 REALTIME EVENT: Recibidos ${data.length} dispositivos desde Supabase Socket.');
       try {
         _dispositivos = data.map((item) {
           try {
@@ -76,13 +77,14 @@ class DispositivosProvider with ChangeNotifier {
     // emitirá el nuevo estado exacto en tiempo real, garantizando sincronización bidireccional perfecta.
 
     try {
-      await _client
+      final response = await _client
           .from('t_dispositivos')
           .update({'estado': newState})
-          .eq('id', disp.id);
+          .eq('id', disp.id)
+          .select();
+      print('✅ CONFIRMACIÓN SUPABASE (ESTADO): $response');
     } catch (e) {
-      print('Error actualizando el dispositivo $areaName: $e');
-      // Podríamos revertir el cambio local si falla
+      print('❌ Error actualizando el dispositivo $areaName: $e');
     }
   }
 
@@ -95,12 +97,14 @@ class DispositivosProvider with ChangeNotifier {
     final newMode = isManual ? 'Automático' : 'Manual';
 
     try {
-      await _client
+      final response = await _client
           .from('t_dispositivos')
           .update({'modo': newMode})
-          .eq('id', disp.id);
+          .eq('id', disp.id)
+          .select();
+      print('✅ CONFIRMACIÓN SUPABASE (MODO): $response');
     } catch (e) {
-      print('Error actualizando el modo del dispositivo $areaName: $e');
+      print('❌ Error actualizando el modo del dispositivo $areaName: $e');
     }
   }
 
