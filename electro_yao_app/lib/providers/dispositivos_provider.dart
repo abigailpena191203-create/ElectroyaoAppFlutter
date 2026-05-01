@@ -6,7 +6,7 @@ import '../models/dispositivo.dart';
 class DispositivosProvider with ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
   List<Dispositivo> _dispositivos = [];
-  StreamSubscription<List<Map<String, dynamic>>>? _subscription;
+  RealtimeChannel? _channel;
 
   List<Dispositivo> get dispositivos => _dispositivos;
 
@@ -14,27 +14,53 @@ class DispositivosProvider with ChangeNotifier {
     _initStream();
   }
 
-  void _initStream() {
-    _subscription = _client
-        .from('t_dispositivos')
-        .stream(primaryKey: ['id'])
-        .listen((List<Map<String, dynamic>> data) {
-      print('🔥 REALTIME EVENT: Recibidos ${data.length} dispositivos desde Supabase Socket.');
-      try {
-        _dispositivos = data.map((item) {
-          try {
-            return Dispositivo.fromJson(item);
-          } catch (e) {
-            print('Error parseando dispositivo: $e en item: $item');
-            return null;
+  void _initStream() async {
+    // 1. Obtener estado inicial (Carga inicial síncrona)
+    try {
+      final response = await _client.from('t_dispositivos').select();
+      _dispositivos = (response as List<dynamic>).map((item) {
+        return Dispositivo.fromJson(item as Map<String, dynamic>);
+      }).toList();
+      notifyListeners();
+      print('📦 CARGA INICIAL: ${_dispositivos.length} dispositivos listos.');
+    } catch (e) {
+      print('❌ ERROR EN CARGA INICIAL: $e');
+    }
+
+    // 2. Suscripción AGRESIVA a PostgresChanges (Canal Puro)
+    _channel = _client.channel('public:t_dispositivos').onPostgresChanges(
+      event: PostgresChangeEvent.all,
+      schema: 'public',
+      table: 't_dispositivos',
+      callback: (PostgresChangePayload payload) {
+        print('🔥 EVENTO EXTERNO PURO DE SUPABASE: ${payload.eventType}');
+        
+        try {
+          if (payload.eventType == PostgresChangeEvent.update) {
+            print('📦 Registro actualizado recibido: ${payload.newRecord}');
+            final newRecord = payload.newRecord;
+            final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
+            if (index != -1) {
+               _dispositivos[index] = Dispositivo.fromJson(newRecord);
+            }
+          } else if (payload.eventType == PostgresChangeEvent.insert) {
+            _dispositivos.add(Dispositivo.fromJson(payload.newRecord));
+          } else if (payload.eventType == PostgresChangeEvent.delete) {
+            final oldRecord = payload.oldRecord;
+            _dispositivos.removeWhere((d) => d.id == oldRecord['id']);
           }
-        }).whereType<Dispositivo>().toList();
-        notifyListeners();
-      } catch (e) {
-        print('Error general procesando datos del stream: $e');
+          
+          // ¡Disparamos el UI inmediatamente después de mutar la lista!
+          notifyListeners(); 
+        } catch (e) {
+          print('❌ Error procesando evento de Realtime: $e');
+        }
+      },
+    ).subscribe((status, [error]) {
+      print('📡 ESTADO DE LA CONEXIÓN SOCKET: $status');
+      if (error != null) {
+        print('❌ ERROR DEL SOCKET: $error');
       }
-    }, onError: (error) {
-      print('Error en el stream de dispositivos: $error');
     });
   }
 
@@ -110,7 +136,7 @@ class DispositivosProvider with ChangeNotifier {
 
   @override
   void dispose() {
-    _subscription?.cancel();
+    _channel?.unsubscribe();
     super.dispose();
   }
 }

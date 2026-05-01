@@ -320,14 +320,10 @@ class _LightingModuleState extends State<LightingModule> {
               icon: Icons.attach_money,
               label: 'Caja/Oficina',
               isOn: cajaOn,
-              hasAutoMode: true,
-              isAutoMode: !cajaManual,
+              hasAutoMode: false,
               isDark: isDark,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Caja/Oficina', val);
-              },
-              onAutoModeToggle: () async {
-                await dispProvider.toggleAutoMode('Caja/Oficina');
               },
             ),
           ],
