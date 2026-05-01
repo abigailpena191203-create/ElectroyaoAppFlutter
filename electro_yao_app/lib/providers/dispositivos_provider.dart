@@ -18,6 +18,7 @@ class DispositivosProvider with ChangeNotifier {
     // 1. Obtener estado inicial (Carga inicial síncrona)
     try {
       final response = await _client.from('t_dispositivos').select();
+      print('DATOS DESDE SUPABASE: ' + response.toString());
       _dispositivos = (response as List<dynamic>).map((item) {
         return Dispositivo.fromJson(item as Map<String, dynamic>);
       }).toList();
