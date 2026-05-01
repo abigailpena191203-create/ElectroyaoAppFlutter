@@ -4,7 +4,9 @@ import 'config/constants.dart';
 import 'services/supabase_service.dart';
 import 'providers/theme_provider.dart';
 import 'providers/dispositivos_provider.dart';
-import 'screens/dashboard_screen.dart';
+import 'providers/energia_provider.dart';
+import 'providers/seguridad_provider.dart';
+import 'screens/main_shell.dart';
 
 void main() async {
   // Asegura que los bindings de Flutter estén inicializados antes de llamadas asíncronas
@@ -20,7 +22,11 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        // DispositivosProvider vive aquí → nunca muere al navegar entre secciones
         ChangeNotifierProvider(create: (_) => DispositivosProvider()),
+        // Providers de datos conectados a Supabase
+        ChangeNotifierProvider(create: (_) => EnergiaProvider()),
+        ChangeNotifierProvider(create: (_) => SeguridadProvider()),
       ],
       child: const ElectroYaoApp(),
     ),
@@ -36,9 +42,9 @@ class ElectroYaoApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'ElectroYao Dashboard',
-      debugShowCheckedModeBanner: false, // Ocultar etiqueta de debug
+      debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
-      home: const DashboardScreen(), // Usar el nuevo DashboardScreen
+      home: const MainShell(), // Shell de navegación modular
     );
   }
 }

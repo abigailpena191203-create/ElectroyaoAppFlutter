@@ -4,7 +4,8 @@ import '../providers/theme_provider.dart';
 import 'dart:ui';
 
 class DashboardHeader extends StatelessWidget {
-  const DashboardHeader({super.key});
+  final String? titulo;
+  const DashboardHeader({super.key, this.titulo});
 
   @override
   Widget build(BuildContext context) {

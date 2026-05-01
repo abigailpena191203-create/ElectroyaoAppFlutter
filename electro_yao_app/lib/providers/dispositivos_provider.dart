@@ -34,29 +34,24 @@ class DispositivosProvider with ChangeNotifier {
       schema: 'public',
       table: 't_dispositivos',
       callback: (PostgresChangePayload payload) {
-        if (payload.newRecord != null) {
-          print('📡 SEÑAL RECIBIDA DESDE NUBE: ${payload.newRecord}');
-          final newRecord = payload.newRecord!;
-          
-          try {
-            if (payload.eventType == PostgresChangeEvent.update) {
-              final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
-              if (index != -1) {
-                 _dispositivos[index] = Dispositivo.fromJson(newRecord);
-              }
-            } else if (payload.eventType == PostgresChangeEvent.insert) {
-              _dispositivos.add(Dispositivo.fromJson(newRecord));
-            } else if (payload.eventType == PostgresChangeEvent.delete) {
-              final oldRecord = payload.oldRecord;
-              _dispositivos.removeWhere((d) => d.id == oldRecord['id']);
+        try {
+          final newRecord = payload.newRecord;
+          final oldRecord = payload.oldRecord;
+
+          if (payload.eventType == PostgresChangeEvent.update && newRecord.isNotEmpty) {
+            print('📡 SEÑAL RECIBIDA DESDE NUBE: $newRecord');
+            final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
+            if (index != -1) {
+              _dispositivos[index] = Dispositivo.fromJson(newRecord);
             }
-          } else if (payload.eventType == PostgresChangeEvent.delete) {
-            final oldRecord = payload.oldRecord;
+          } else if (payload.eventType == PostgresChangeEvent.insert && newRecord.isNotEmpty) {
+            _dispositivos.add(Dispositivo.fromJson(newRecord));
+          } else if (payload.eventType == PostgresChangeEvent.delete && oldRecord.isNotEmpty) {
             _dispositivos.removeWhere((d) => d.id == oldRecord['id']);
           }
-          
-          // ¡Disparamos el UI inmediatamente después de mutar la lista!
-          notifyListeners(); 
+
+          // Disparar UI inmediatamente
+          notifyListeners();
         } catch (e) {
           print('❌ Error procesando evento de Realtime: $e');
         }

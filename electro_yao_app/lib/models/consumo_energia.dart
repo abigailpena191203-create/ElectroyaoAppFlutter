@@ -15,7 +15,7 @@ class ConsumoEnergia {
     return ConsumoEnergia(
       id: json['id'] as String,
       dispositivoId: json['dispositivo_id'] as String?,
-      vatios: json['Vatios'] != null ? (json['Vatios'] as num).toDouble() : null,
+      vatios: json['vatios'] != null ? (json['vatios'] as num).toDouble() : null,
       fecha: json['fecha'] != null
           ? DateTime.parse(json['fecha'] as String)
           : null,
