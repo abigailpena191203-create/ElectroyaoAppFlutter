@@ -14,7 +14,7 @@ class SecurityLogList extends StatefulWidget {
 }
 
 class _SecurityLogListState extends State<SecurityLogList> {
-  String _filtro = 'Todos'; // Todos, Hoy, Semana
+  String _filtro = 'Hoy'; // SECCIÓN ACTUALIZADA: Por defecto 'Hoy'
   DateTime? _fechaSeleccionada;
 
   @override

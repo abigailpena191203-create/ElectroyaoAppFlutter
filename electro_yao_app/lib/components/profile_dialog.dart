@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfileDialog extends StatelessWidget {
@@ -6,6 +8,7 @@ class ProfileDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authP = context.watch<AuthProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bgColor = isDark ? const Color(0xFF0D142B) : Colors.white;
     final textColor = isDark ? Colors.white : const Color(0xFF0F172A);
@@ -43,15 +46,49 @@ class ProfileDialog extends StatelessWidget {
                 color: textColor,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Text(
-              'Ingeniera',
+              'Ingeniera en sistemas',
               style: TextStyle(
                 fontSize: 16,
-                color: isDark ? Colors.blue[300] : Colors.blue[700],
-                fontWeight: FontWeight.w500,
+                color: Colors.blue[600], // Azul solicitado
+                fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 20),
+
+            // --- Selector de Roles (Simulador RBAC) ---
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.blue.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.2)),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<UserRole>(
+                  value: authP.role,
+                  isExpanded: true,
+                  icon: const Icon(Icons.shield_rounded, color: Colors.blue),
+                  items: UserRole.values.map((role) {
+                    String label = '';
+                    switch (role) {
+                      case UserRole.administrador: label = 'Administrador (Total)'; break;
+                      case UserRole.ventas: label = 'Ventas (Limitado)'; break;
+                      case UserRole.seguridad: label = 'Seguridad (Limitado)'; break;
+                    }
+                    return DropdownMenuItem(
+                      value: role,
+                      child: Text(label, style: TextStyle(color: textColor, fontSize: 14)),
+                    );
+                  }).toList(),
+                  onChanged: (newRole) {
+                    if (newRole != null) authP.setRole(newRole);
+                  },
+                ),
+              ),
+            ),
+
             const SizedBox(height: 24),
             const Text(
               'Ingeniera apasionada por la domótica y el ahorro energético. "Diseñando el futuro, vatio a vatio".',

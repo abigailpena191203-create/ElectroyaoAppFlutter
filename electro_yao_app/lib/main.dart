@@ -7,6 +7,7 @@ import 'providers/theme_provider.dart';
 import 'providers/dispositivos_provider.dart';
 import 'providers/energia_provider.dart';
 import 'providers/seguridad_provider.dart';
+import 'providers/auth_provider.dart';
 import 'screens/main_shell.dart';
 
 void main() async {
@@ -28,6 +29,7 @@ void main() async {
         // Providers de datos conectados a Supabase
         ChangeNotifierProvider(create: (_) => EnergiaProvider()),
         ChangeNotifierProvider(create: (_) => SeguridadProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
       child: const ElectroYaoApp(),
     ),

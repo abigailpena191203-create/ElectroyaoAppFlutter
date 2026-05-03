@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/log_seguridad.dart';
 import '../providers/seguridad_provider.dart';
+import '../providers/auth_provider.dart';
 import 'dashboard_screen.dart';
 import 'energia_screen.dart';
 import 'seguridad_screen.dart';
@@ -34,6 +35,15 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
+    final authP = context.watch<AuthProvider>();
+    // Filtrar destinos basados en rol
+    final visibleDestinations = _destinations.where((d) => authP.canAccess(d.label)).toList();
+    
+    // Ajustar el índice si la pantalla actual ya no es accesible
+    if (_selectedIndex >= visibleDestinations.length) {
+      _selectedIndex = 0;
+    }
+
     // Escuchar nuevos logs para mostrar notificación In-App
     final seguridadProvider = Provider.of<SeguridadProvider>(context);
     _escucharAlertasSeguridad(context, seguridadProvider);
@@ -57,11 +67,19 @@ class _MainShellState extends State<MainShell> {
                     Icon(Icons.memory, color: Colors.blue[300], size: 48),
                     const SizedBox(height: 8),
                     const Text('ElectroYao V1.0', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                    if (authP.role != UserRole.administrador)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          'Modo: ${authP.roleName}',
+                          style: TextStyle(color: Colors.blue[200], fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                      ),
                   ],
                 ),
               ),
             ),
-            ..._destinations.asMap().entries.map((e) => ListTile(
+            ...visibleDestinations.asMap().entries.map((e) => ListTile(
               leading: Icon(e.value.icon, color: _selectedIndex == e.key ? Colors.blue[300] : Colors.white70),
               title: Text(e.value.label, style: TextStyle(color: _selectedIndex == e.key ? Colors.blue[300] : Colors.white70, fontWeight: _selectedIndex == e.key ? FontWeight.bold : FontWeight.normal)),
               selected: _selectedIndex == e.key,
@@ -76,9 +94,19 @@ class _MainShellState extends State<MainShell> {
       ),
       body: IndexedStack(
         index: _selectedIndex,
-        children: _screens,
+        children: visibleDestinations.map((d) => _getScreen(d.label)).toList(),
       ),
     );
+  }
+
+  Widget _getScreen(String label) {
+    switch (label) {
+      case 'Inicio': return const DashboardScreen();
+      case 'Energía': return const EnergiaScreen();
+      case 'Seguridad': return const SeguridadScreen();
+      case 'Reportes': return const ReportesScreen();
+      default: return const DashboardScreen();
+    }
   }
 
   int _lastLogCount = 0;
