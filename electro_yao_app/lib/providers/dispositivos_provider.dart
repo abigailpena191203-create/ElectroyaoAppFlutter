@@ -17,15 +17,12 @@ class DispositivosProvider with ChangeNotifier {
   void _initStream() async {
     // 1. Obtener estado inicial (Carga inicial síncrona)
     try {
-      final response = await _client.from('t_dispositivos').select();
-      print('DATOS DESDE SUPABASE: ' + response.toString());
       _dispositivos = (response as List<dynamic>).map((item) {
         return Dispositivo.fromJson(item as Map<String, dynamic>);
       }).toList();
       notifyListeners();
-      print('📦 CARGA INICIAL: ${_dispositivos.length} dispositivos listos.');
     } catch (e) {
-      print('❌ ERROR EN CARGA INICIAL: $e');
+      // Error silencioso en producción
     }
 
     // 2. Suscripción AGRESIVA a PostgresChanges (Canal Puro)
@@ -39,7 +36,6 @@ class DispositivosProvider with ChangeNotifier {
           final oldRecord = payload.oldRecord;
 
           if (payload.eventType == PostgresChangeEvent.update && newRecord.isNotEmpty) {
-            print('📡 SEÑAL RECIBIDA DESDE NUBE: $newRecord');
             final index = _dispositivos.indexWhere((d) => d.id == newRecord['id']);
             if (index != -1) {
               _dispositivos[index] = Dispositivo.fromJson(newRecord);
@@ -53,14 +49,11 @@ class DispositivosProvider with ChangeNotifier {
           // Disparar UI inmediatamente
           notifyListeners();
         } catch (e) {
-          print('❌ Error procesando evento de Realtime: $e');
+          // Error silencioso
         }
       },
-    ).subscribe((status, [error]) {
-      print('📡 ESTADO DE LA CONEXIÓN SOCKET: $status');
-      if (error != null) {
-        print('❌ ERROR DEL SOCKET: $error');
-      }
+    }).subscribe((status, [error]) {
+      // Suscripción silenciosa
     });
   }
 
@@ -92,15 +85,12 @@ class DispositivosProvider with ChangeNotifier {
   // Actualizar el estado de un dispositivo en Supabase
   Future<void> toggleDispositivo(String areaName, bool isOn) async {
     print('💡 INTENTO DE TOGGLE en UI para: $areaName -> a estado isOn=$isOn');
-    final disp = getDispositivoByArea(areaName);
     if (disp == null) {
-      print('❌ ERROR: Dispositivo nulo para $areaName');
       return;
     }
 
     // Validación estricta en el provider: no permite cambio si está en automático
     if (!isDispositivoManual(areaName)) {
-      print('🛑 Intento de cambio rechazado: El dispositivo $areaName está en modo Automático.');
       return;
     }
 
@@ -111,16 +101,10 @@ class DispositivosProvider with ChangeNotifier {
     // emitirá el nuevo estado exacto en tiempo real, garantizando sincronización bidireccional perfecta.
 
     try {
-      print('🚀 ENVIANDO CAMBIO A SUPABASE: $newState para el dispositivo $areaName (ID: ${disp.id})');
-      final response = await _client
-          .from('t_dispositivos')
-          .update({'estado': newState})
-          .eq('id', disp.id)
           .select()
           .single();
-      print('✅ CONFIRMACIÓN SUPABASE (ESTADO): $response');
     } catch (e) {
-      print('❌ Error actualizando el dispositivo $areaName: $e');
+      // Error silencioso
     }
   }
 

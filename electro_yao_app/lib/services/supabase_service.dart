@@ -31,8 +31,7 @@ class SupabaseService {
           .map((item) => Dispositivo.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Error al obtener la lista de dispositivos: $e');
-      // Puedes manejar el error como desees, aquí lo relanzamos
+      // Re-lanzar para manejo en el provider
       rethrow;
     }
   }

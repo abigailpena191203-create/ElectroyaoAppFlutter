@@ -47,6 +47,7 @@ class ElectroYaoApp extends StatelessWidget {
       title: 'ElectroYao Dashboard',
       debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
+      themeMode: ThemeMode.dark,
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

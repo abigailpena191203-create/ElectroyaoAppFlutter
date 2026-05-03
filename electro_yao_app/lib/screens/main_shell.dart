@@ -7,6 +7,7 @@ import 'dashboard_screen.dart';
 import 'energia_screen.dart';
 import 'seguridad_screen.dart';
 import 'reportes_screen.dart';
+import 'usuarios_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -23,6 +24,7 @@ class _MainShellState extends State<MainShell> {
     _NavItem(icon: Icons.bolt_rounded, label: 'Energía'),
     _NavItem(icon: Icons.security_rounded, label: 'Seguridad'),
     _NavItem(icon: Icons.description_rounded, label: 'Reportes'),
+    _NavItem(icon: Icons.people_rounded, label: 'Gestión de Usuarios'),
   ];
 
   // IndexedStack mantiene todos los widgets vivos → Providers NUNCA pierden conexión
@@ -105,6 +107,7 @@ class _MainShellState extends State<MainShell> {
       case 'Energía': return const EnergiaScreen();
       case 'Seguridad': return const SeguridadScreen();
       case 'Reportes': return const ReportesScreen();
+      case 'Gestión de Usuarios': return const UsuariosScreen();
       default: return const DashboardScreen();
     }
   }

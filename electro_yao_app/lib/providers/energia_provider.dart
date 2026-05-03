@@ -68,15 +68,10 @@ class EnergiaProvider with ChangeNotifier {
           .map((item) => ConsumoEnergia.fromJson(item as Map<String, dynamic>))
           .toList();
 
-      print('⚡ ENERGÍA: ${_registros.length} registros cargados desde Supabase.');
-
-      // Si Supabase está vacío, usar Mock Data para demo
       if (_registros.isEmpty) {
         _registros = _generarMockData();
-        print('📊 ENERGÍA: Datos reales vacíos, usando Mock Data para demo.');
       }
     } catch (e) {
-      print('❌ ERROR cargando consumo de energía: $e');
       _registros = _generarMockData();
     } finally {
       _isLoading = false;
@@ -95,7 +90,6 @@ class EnergiaProvider with ChangeNotifier {
           table: 't_consumo_energia',
           callback: (PostgresChangePayload payload) {
             if (payload.newRecord != null) {
-              print('📡 NUEVO REGISTRO DE ENERGÍA: ${payload.newRecord}');
               final nuevo =
                   ConsumoEnergia.fromJson(payload.newRecord!);
               _registros.insert(0, nuevo);
@@ -104,7 +98,7 @@ class EnergiaProvider with ChangeNotifier {
           },
         )
         .subscribe((status, [error]) {
-      print('⚡ SOCKET ENERGÍA: $status');
+      // Silencioso
     });
   }
 

@@ -25,6 +25,10 @@ class AuthProvider with ChangeNotifier {
   }
 
   bool canAccess(String route) {
+    if (route == 'Gestión de Usuarios') {
+      return _role == UserRole.administrador;
+    }
+    
     switch (_role) {
       case UserRole.administrador:
         return true;

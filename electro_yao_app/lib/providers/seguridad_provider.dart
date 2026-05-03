@@ -52,9 +52,8 @@ class SeguridadProvider with ChangeNotifier {
       _logs = (response as List<dynamic>)
           .map((item) => LogSeguridad.fromJson(item as Map<String, dynamic>))
           .toList();
-      print('🔒 SEGURIDAD: ${_logs.length} logs cargados.');
     } catch (e) {
-      print('❌ ERROR cargando logs de seguridad: $e');
+      // Error silencioso
     }
   }
 
@@ -67,9 +66,8 @@ class SeguridadProvider with ChangeNotifier {
       _usuarios = (response as List<dynamic>)
           .map((item) => Usuario.fromJson(item as Map<String, dynamic>))
           .toList();
-      print('👥 USUARIOS: ${_usuarios.length} usuarios cargados.');
     } catch (e) {
-      print('❌ ERROR cargando usuarios: $e');
+      // Error silencioso
     }
   }
 
@@ -82,7 +80,6 @@ class SeguridadProvider with ChangeNotifier {
           table: 't_logs_seguridad',
           callback: (PostgresChangePayload payload) {
             if (payload.newRecord != null) {
-              print('🚨 NUEVO LOG DE SEGURIDAD: ${payload.newRecord}');
               final nuevoLog = LogSeguridad.fromJson(payload.newRecord!);
               _logs.insert(0, nuevoLog);
               notifyListeners();
@@ -90,7 +87,7 @@ class SeguridadProvider with ChangeNotifier {
           },
         )
         .subscribe((status, [error]) {
-      print('🔒 SOCKET SEGURIDAD: $status');
+      // Silencioso
     });
   }
 
@@ -120,9 +117,8 @@ class SeguridadProvider with ChangeNotifier {
         fechaRegistro: u.fechaRegistro,
       );
       notifyListeners();
-      print('✅ USUARIO ${u.nombre} → $nuevoEstado');
     } catch (e) {
-      print('❌ Error actualizando usuario $usuarioId: $e');
+      // Error silencioso
     }
   }
 
@@ -150,9 +146,8 @@ class SeguridadProvider with ChangeNotifier {
         fechaRegistro: u.fechaRegistro,
       );
       notifyListeners();
-      print('✅ ROL DE ${u.nombre} → $nuevoRol');
     } catch (e) {
-      print('❌ Error cambiando rol de usuario $usuarioId: $e');
+      // Error silencioso
     }
   }
 
