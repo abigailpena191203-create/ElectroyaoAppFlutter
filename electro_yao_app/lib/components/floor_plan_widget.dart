@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/dispositivos_provider.dart';
+import '../providers/theme_provider.dart';
 
 /// Plano de Sucursal 2 con puntos reactivos al estado de los dispositivos
 class FloorPlanWidget extends StatelessWidget {
@@ -9,7 +10,7 @@ class FloorPlanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DispositivosProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.select<ThemeProvider, bool>((tp) => tp.isDarkMode);
 
     final ventasOn = _isOn(provider, 'Área de Ventas');
     final almacenOn = _isOn(provider, 'Almacén');
@@ -45,36 +46,38 @@ class FloorPlanWidget extends StatelessWidget {
           ]),
           const SizedBox(height: 16),
           // Layout del plano
-          Column(children: [
-            // Área de Ventas (superior, ancho completo)
-            _RoomTile(
-              label: 'Área de Ventas',
-              isOn: ventasOn,
-              roomBg: roomBg,
-              roomBorder: roomBorder,
-              textColor: textColor,
-              suffix: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: cerraduraOn ? Colors.green.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: cerraduraOn ? Colors.green : Colors.grey),
+          RepaintBoundary(
+            child: Column(children: [
+              // Área de Ventas (superior, ancho completo)
+              _RoomTile(
+                label: 'Área de Ventas',
+                isOn: ventasOn,
+                roomBg: roomBg,
+                roomBorder: roomBorder,
+                textColor: textColor,
+                suffix: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: cerraduraOn ? Colors.green.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: cerraduraOn ? Colors.green : Colors.grey),
+                  ),
+                  child: Row(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.login_rounded, size: 10, color: cerraduraOn ? Colors.green : Colors.grey),
+                    const SizedBox(width: 4),
+                    Text('ENTRADA', style: TextStyle(color: cerraduraOn ? Colors.green : Colors.grey, fontSize: 9, fontWeight: FontWeight.bold)),
+                  ]),
                 ),
-                child: Row(mainAxisSize: MainAxisSize.min, children: [
-                  Icon(Icons.login_rounded, size: 10, color: cerraduraOn ? Colors.green : Colors.grey),
-                  const SizedBox(width: 4),
-                  Text('ENTRADA', style: TextStyle(color: cerraduraOn ? Colors.green : Colors.grey, fontSize: 9, fontWeight: FontWeight.bold)),
-                ]),
               ),
-            ),
-            const SizedBox(height: 8),
-            // Almacén y Caja/Oficina (inferior, mitad cada uno)
-            Row(children: [
-              Expanded(child: _RoomTile(label: 'Almacén', isOn: almacenOn, roomBg: roomBg, roomBorder: roomBorder, textColor: textColor)),
-              const SizedBox(width: 8),
-              Expanded(child: _RoomTile(label: 'Caja/Oficina', isOn: cajaOn, roomBg: roomBg, roomBorder: roomBorder, textColor: textColor)),
+              const SizedBox(height: 8),
+              // Almacén y Caja/Oficina (inferior, mitad cada uno)
+              Row(children: [
+                Expanded(child: _RoomTile(label: 'Almacén', isOn: almacenOn, roomBg: roomBg, roomBorder: roomBorder, textColor: textColor)),
+                const SizedBox(width: 8),
+                Expanded(child: _RoomTile(label: 'Caja/Oficina', isOn: cajaOn, roomBg: roomBg, roomBorder: roomBorder, textColor: textColor)),
+              ]),
             ]),
-          ]),
+          ),
           const SizedBox(height: 12),
           // Leyenda
           Row(children: [

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/seguridad_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/log_seguridad.dart';
 import 'shimmer_loader.dart';
 
@@ -19,7 +20,7 @@ class _SecurityLogListState extends State<SecurityLogList> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<SeguridadProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.select<ThemeProvider, bool>((tp) => tp.isDarkMode);
     final cardBg = isDark ? const Color(0xFF0D1F3C) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E3A5F) : const Color(0xFFE2E8F0);
 
@@ -51,12 +52,19 @@ class _SecurityLogListState extends State<SecurityLogList> {
         _buildFiltros(isDark),
         const SizedBox(height: 16),
         // Lista
-        if (provider.isLoading)
-          const ShimmerList(itemCount: 5)
-        else if (logsFiltered.isEmpty)
-          _buildEmpty(isDark)
-        else
-          ...logsFiltered.take(widget.maxItems).map((log) => _LogTile(log: log, isDark: isDark)),
+        RepaintBoundary(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (provider.isLoading)
+                const ShimmerList(itemCount: 5)
+              else if (logsFiltered.isEmpty)
+                _buildEmpty(isDark)
+              else
+                ...logsFiltered.take(widget.maxItems).map((log) => _LogTile(log: log, isDark: isDark)),
+            ],
+          ),
+        ),
       ]),
     );
   }

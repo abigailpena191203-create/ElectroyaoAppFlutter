@@ -29,6 +29,29 @@ class EnergiaProvider with ChangeNotifier {
     return _registros.first.vatios ?? 0.0;
   }
 
+  // ---- Metas de Ahorro (Calculadas o desde DB) ----
+  double get metaAhorroMensual => 200.0;
+  
+  double get ahorroActualMensual {
+    if (_registros.isEmpty) return 0.0;
+    // Simulación: Comparar consumo real vs un promedio "base" de 400W
+    // En producción, esto vendría de una tabla 't_metas' o similar
+    final consumoTotalMes = _registros.take(30).fold(0.0, (s, r) => s + (r.vatios ?? 0.0));
+    final baseIdeal = 400.0 * 30; // 400W constantes por 30 registros
+    final ahorroVatios = max(0.0, baseIdeal - consumoTotalMes);
+    return (ahorroVatios / 1000.0) * 0.15; // Suponiendo $0.15 por kWh ahorrado
+  }
+
+  double get limiteConsumo => 250.0;
+
+  int get diasRestantesMes {
+    final now = DateTime.now();
+    final lastDay = DateTime(now.year, now.month + 1, 0).day;
+    return lastDay - now.day;
+  }
+
+  double get promedioDiarioAhorro => ahorroActualMensual / (DateTime.now().day > 0 ? DateTime.now().day : 1);
+
   EnergiaProvider() {
     _initData();
   }

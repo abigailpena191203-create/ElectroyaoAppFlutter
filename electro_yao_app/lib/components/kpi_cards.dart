@@ -16,7 +16,7 @@ class KpiCards extends StatelessWidget {
 
     final isLoading = energiaP.isLoading;
     final consumoActual = energiaP.consumoActual;
-    final ahorroMensual = consumoActual * 0.03;
+    final ahorroMensual = energiaP.ahorroActualMensual;
     final dispositivosActivos = dispositivosP.dispositivos.where((d) {
       final e = d.estado?.toLowerCase().trim() ?? '';
       return e == 'activo' || e == 'encendido';
@@ -149,8 +149,12 @@ class _KpiCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(
+                        color: isDark ? iconBg : iconBg.withValues(alpha: 0.9),
+                        borderRadius: BorderRadius.circular(10),
+                        border: isDark ? null : Border.all(color: Colors.black.withValues(alpha: 0.1), width: 1.5),
+                        boxShadow: isDark ? [BoxShadow(color: iconBg.withValues(alpha: 0.4), blurRadius: 8)] : null,
+                      ),
                       child: Icon(icon, color: Colors.white, size: 22),
                     ),
                     if (badge != null)

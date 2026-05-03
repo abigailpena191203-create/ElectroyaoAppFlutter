@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/energia_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/consumo_energia.dart';
 
 /// Historial de Ahorro Energético — fiel a la captura de pantalla
@@ -26,7 +27,8 @@ class _HistorialAhorroState extends State<HistorialAhorro> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<EnergiaProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.select<ThemeProvider, bool>((tp) => tp.isDarkMode);
+    final theme = Theme.of(context);
     final cardBg = isDark ? const Color(0xFF0D1F3C) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E3A5F) : const Color(0xFFE2E8F0);
 
@@ -41,11 +43,11 @@ class _HistorialAhorroState extends State<HistorialAhorro> {
       padding: const EdgeInsets.all(20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Header
-        Row(children: [
-          Icon(Icons.calendar_month_rounded, color: Colors.blue[300], size: 20),
-          const SizedBox(width: 8),
+        const Row(children: [
+          Icon(Icons.calendar_month_rounded, color: Colors.blueAccent, size: 20),
+          SizedBox(width: 8),
           Text('Historial de Ahorro Energético',
-              style: TextStyle(color: isDark ? Colors.white : const Color(0xFF0F172A), fontWeight: FontWeight.bold, fontSize: 15)),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
         ]),
         const SizedBox(height: 20),
         // Tab bar
@@ -55,20 +57,22 @@ class _HistorialAhorroState extends State<HistorialAhorro> {
         _buildStats(periodData, isDark),
         const SizedBox(height: 20),
         // Tabla + Calendario
-        LayoutBuilder(builder: (context, constraints) {
-          if (constraints.maxWidth > 600) {
-            return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Expanded(flex: 3, child: _buildTable(periodData, isDark)),
-              const SizedBox(width: 20),
-              Expanded(flex: 2, child: _buildCalendar(isDark)),
+        RepaintBoundary(
+          child: LayoutBuilder(builder: (context, constraints) {
+            if (constraints.maxWidth > 600) {
+              return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Expanded(flex: 3, child: _buildTable(periodData, isDark)),
+                const SizedBox(width: 20),
+                Expanded(flex: 2, child: _buildCalendar(isDark)),
+              ]);
+            }
+            return Column(children: [
+              _buildTable(periodData, isDark),
+              const SizedBox(height: 20),
+              _buildCalendar(isDark),
             ]);
-          }
-          return Column(children: [
-            _buildTable(periodData, isDark),
-            const SizedBox(height: 20),
-            _buildCalendar(isDark),
-          ]);
-        }),
+          }),
+        ),
       ]),
     );
   }

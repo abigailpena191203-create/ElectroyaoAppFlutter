@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 import '../providers/energia_provider.dart';
+import '../providers/theme_provider.dart';
 import '../models/consumo_energia.dart';
 
 class EnergyChartWidget extends StatelessWidget {
@@ -10,7 +11,8 @@ class EnergyChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<EnergiaProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = context.select<ThemeProvider, bool>((tp) => tp.isDarkMode);
+    final theme = Theme.of(context);
     final cardBg = isDark ? const Color(0xFF0D1F3C) : Colors.white;
     final borderColor = isDark ? const Color(0xFF1E3A5F) : const Color(0xFFE2E8F0);
     final gridColor = isDark ? const Color(0xFF1E3A5F).withValues(alpha: 0.5) : const Color(0xFFE2E8F0);
@@ -34,11 +36,13 @@ class EnergyChartWidget extends StatelessWidget {
                 style: TextStyle(color: isDark ? Colors.white : const Color(0xFF0F172A), fontWeight: FontWeight.bold, fontSize: 15)),
           ]),
           const SizedBox(height: 24),
-          SizedBox(
-            height: 220,
-            child: provider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _buildChart(provider.registros, gridColor, labelColor),
+          RepaintBoundary(
+            child: SizedBox(
+              height: 220,
+              child: provider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _buildChart(provider.registros, gridColor, labelColor, isDark),
+            ),
           ),
           const SizedBox(height: 16),
           _buildLegend(labelColor),
@@ -47,7 +51,7 @@ class EnergyChartWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildChart(List<ConsumoEnergia> registros, Color gridColor, Color labelColor) {
+  Widget _buildChart(List<ConsumoEnergia> registros, Color gridColor, Color labelColor, bool isDark) {
     // Tomamos los últimos 12 registros y los invertimos (más antiguo primero)
     final data = registros.take(12).toList().reversed.toList();
     if (data.isEmpty) return const SizedBox.shrink();
@@ -110,6 +114,7 @@ class EnergyChartWidget extends StatelessWidget {
         ),
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
+            getTooltipColor: (touchedSpot) => isDark ? Colors.black87 : Colors.white,
             getTooltipItems: (spots) => spots.map((s) {
               final label = s.barIndex == 0 ? 'Consumo' : 'Ahorro';
               final color = s.barIndex == 0 ? Colors.blue[300]! : Colors.green[400]!;

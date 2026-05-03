@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'config/constants.dart';
 import 'services/supabase_service.dart';
@@ -44,6 +45,16 @@ class ElectroYaoApp extends StatelessWidget {
       title: 'ElectroYao Dashboard',
       debugShowCheckedModeBanner: false,
       theme: themeProvider.currentTheme,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'ES'), // Español
+        Locale('en', 'US'), // Inglés
+      ],
+      locale: const Locale('es', 'ES'), // Forzar Español
       home: const MainShell(), // Shell de navegación modular
     );
   }

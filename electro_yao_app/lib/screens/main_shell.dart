@@ -18,7 +18,7 @@ class _MainShellState extends State<MainShell> {
   int _selectedIndex = 0;
 
   static const _destinations = [
-    _NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard'),
+    _NavItem(icon: Icons.dashboard_rounded, label: 'Inicio'),
     _NavItem(icon: Icons.bolt_rounded, label: 'Energía'),
     _NavItem(icon: Icons.security_rounded, label: 'Seguridad'),
     _NavItem(icon: Icons.description_rounded, label: 'Reportes'),
@@ -38,114 +38,45 @@ class _MainShellState extends State<MainShell> {
     final seguridadProvider = Provider.of<SeguridadProvider>(context);
     _escucharAlertasSeguridad(context, seguridadProvider);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 700;
-
-        if (isWide) {
-          return _buildWithRail();
-        } else {
-          return _buildWithBottomNav();
-        }
-      },
-    );
-  }
-
-  Widget _buildWithRail() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      body: Row(
-        children: [
-          // ---- Navigation Rail (Web / Tablet) ----
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: isDark
-                ? const Color(0xFF0D142B)
-                : const Color(0xFF1E3A8A),
-            selectedIconTheme: IconThemeData(
-              color: isDark ? Colors.blue[300] : Colors.white,
-              size: 26,
-            ),
-            unselectedIconTheme: IconThemeData(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.4)
-                  : Colors.white.withValues(alpha: 0.6),
-              size: 22,
-            ),
-            selectedLabelTextStyle: TextStyle(
-              color: isDark ? Colors.blue[300] : Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 11,
-            ),
-            unselectedLabelTextStyle: TextStyle(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.5)
-                  : Colors.white.withValues(alpha: 0.7),
-              fontSize: 11,
-            ),
-            leading: Padding(
-              padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
-              child: Column(
-                children: [
-                  Icon(Icons.memory, color: Colors.blue[300], size: 28),
-                  const Icon(Icons.bolt, color: Colors.yellowAccent, size: 14),
-                ],
+      drawer: Drawer(
+        backgroundColor: isDark ? const Color(0xFF0D142B) : const Color(0xFF1E3A8A),
+        child: Column(
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.memory, color: Colors.blue[300], size: 48),
+                    const SizedBox(height: 8),
+                    const Text('ElectroYao V1.0', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+                  ],
+                ),
               ),
             ),
-            destinations: _destinations
-                .map((d) => NavigationRailDestination(
-                      icon: Icon(d.icon),
-                      label: Text(d.label),
-                    ))
-                .toList(),
-          ),
-          const VerticalDivider(thickness: 1, width: 1),
-          // ---- Contenido principal ----
-          Expanded(
-            child: IndexedStack(
-              index: _selectedIndex,
-              children: _screens,
-            ),
-          ),
-        ],
+            ..._destinations.asMap().entries.map((e) => ListTile(
+              leading: Icon(e.value.icon, color: _selectedIndex == e.key ? Colors.blue[300] : Colors.white70),
+              title: Text(e.value.label, style: TextStyle(color: _selectedIndex == e.key ? Colors.blue[300] : Colors.white70, fontWeight: _selectedIndex == e.key ? FontWeight.bold : FontWeight.normal)),
+              selected: _selectedIndex == e.key,
+              selectedTileColor: Colors.white.withValues(alpha: 0.05),
+              onTap: () {
+                setState(() => _selectedIndex = e.key);
+                Navigator.pop(context); // Close drawer
+              },
+            )),
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildWithBottomNav() {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-        backgroundColor: isDark
-            ? const Color(0xFF0D142B)
-            : const Color(0xFF1E3A8A),
-        indicatorColor: isDark
-            ? Colors.blue.withValues(alpha: 0.3)
-            : Colors.white.withValues(alpha: 0.25),
-        destinations: _destinations
-            .map((d) => NavigationDestination(
-                  icon: Icon(d.icon,
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.6)
-                          : Colors.white.withValues(alpha: 0.7)),
-                  selectedIcon: Icon(d.icon,
-                      color: isDark ? Colors.blue[300] : Colors.white),
-                  label: d.label,
-                ))
-            .toList(),
-        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       ),
     );
   }

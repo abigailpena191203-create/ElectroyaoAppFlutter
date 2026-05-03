@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import 'profile_dialog.dart';
 import 'dart:ui';
 
 class DashboardHeader extends StatelessWidget {
@@ -78,44 +79,65 @@ class DashboardHeader extends StatelessWidget {
                   Expanded(
                     child: Row(
                       children: [
-                        // Icono estilo Glassmorphism
+                        // Hamburger Menu for Drawer
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          margin: const EdgeInsets.only(right: 12),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ],
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(
-                                sigmaX: 5.0,
-                                sigmaY: 5.0,
+                          child: IconButton(
+                            icon: const Icon(Icons.menu_rounded, color: Colors.white),
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => const ProfileDialog(),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
                               ),
-                              child: Stack(
-                                alignment: Alignment.bottomRight,
-                                children: [
-                                  Icon(
-                                    Icons.memory,
-                                    color: Colors.blue[200],
-                                    size: 32,
-                                  ),
-                                  const Icon(
-                                    Icons.bolt,
-                                    color: Colors.yellowAccent,
-                                    size: 16,
-                                  ),
-                                ],
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 5.0,
+                                  sigmaY: 5.0,
+                                ),
+                                child: Stack(
+                                  alignment: Alignment.bottomRight,
+                                  children: [
+                                    Icon(
+                                      Icons.memory,
+                                      color: Colors.blue[200],
+                                      size: 32,
+                                    ),
+                                    const Icon(
+                                      Icons.bolt,
+                                      color: Colors.yellowAccent,
+                                      size: 16,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -155,7 +177,7 @@ class DashboardHeader extends StatelessWidget {
                                       ),
                                     ),
                                     child: Text(
-                                      'V2.0',
+                                      'V1.0',
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
