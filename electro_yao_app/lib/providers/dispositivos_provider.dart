@@ -85,6 +85,7 @@ class DispositivosProvider with ChangeNotifier {
   // Actualizar el estado de un dispositivo en Supabase
   Future<void> toggleDispositivo(String areaName, bool isOn) async {
     print('💡 INTENTO DE TOGGLE en UI para: $areaName -> a estado isOn=$isOn');
+    final disp = getDispositivoByArea(areaName);
     if (disp == null) {
       return;
     }
@@ -101,6 +102,10 @@ class DispositivosProvider with ChangeNotifier {
     // emitirá el nuevo estado exacto en tiempo real, garantizando sincronización bidireccional perfecta.
 
     try {
+      await _client
+          .from('t_dispositivos')
+          .update({'estado': newState})
+          .eq('id', disp.id)
           .select()
           .single();
     } catch (e) {
