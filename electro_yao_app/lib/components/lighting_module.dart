@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/dispositivos_provider.dart';
+import '../providers/auth_provider.dart';
 
 class LightingModule extends StatefulWidget {
   const LightingModule({super.key});
@@ -21,6 +22,7 @@ class _LightingModuleState extends State<LightingModule> {
     bool isAutoMode = false,
     VoidCallback? onAutoModeToggle,
     required bool isDark,
+    required bool isAuthorized,
   }) {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -60,12 +62,15 @@ class _LightingModuleState extends State<LightingModule> {
                 ],
               ),
               Opacity(
-                opacity: isAutoMode ? 0.5 : 1.0,
-                child: Switch(
-                  value: isOn,
-                  onChanged: isAutoMode ? null : onToggle,
-                  activeThumbColor: Colors.yellow,
-                  activeTrackColor: Colors.yellow.withValues(alpha: 0.3),
+                opacity: (isAutoMode || !isAuthorized) ? 0.5 : 1.0,
+                child: Tooltip(
+                  message: !isAuthorized ? "Acceso restringido para su rol" : "",
+                  child: Switch(
+                    value: isOn,
+                    onChanged: (isAutoMode || !isAuthorized) ? null : onToggle,
+                    activeThumbColor: Colors.yellow,
+                    activeTrackColor: Colors.yellow.withValues(alpha: 0.3),
+                  ),
                 ),
               ),
             ],
@@ -131,33 +136,36 @@ class _LightingModuleState extends State<LightingModule> {
                       ],
                     ),
                   ),
-                  InkWell(
-                    onTap: onAutoModeToggle,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.green.withValues(alpha: 0.2)
-                            : Colors.green.shade100,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: isDark
-                              ? Colors.green.withValues(alpha: 0.4)
-                              : Colors.green.shade300,
+                  Tooltip(
+                    message: !isAuthorized ? "Acceso restringido para su rol" : "",
+                    child: InkWell(
+                      onTap: !isAuthorized ? null : onAutoModeToggle,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
                         ),
-                      ),
-                      child: Text(
-                        'Cambiar',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                        decoration: BoxDecoration(
                           color: isDark
-                              ? Colors.green.shade400
-                              : Colors.green.shade700,
+                              ? Colors.green.withValues(alpha: 0.2)
+                              : Colors.green.shade100,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.green.withValues(alpha: 0.4)
+                                : Colors.green.shade300,
+                          ),
+                        ),
+                        child: Text(
+                          'Cambiar',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? Colors.green.shade400
+                                : Colors.green.shade700,
+                          ),
                         ),
                       ),
                     ),
@@ -251,7 +259,9 @@ class _LightingModuleState extends State<LightingModule> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final dispProvider = Provider.of<DispositivosProvider>(context);
+    final authP = Provider.of<AuthProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final isAuthorized = authP.canAccess('Energía');
 
     final ventasOn = dispProvider.isDispositivoOn('Área de Ventas');
     final ventasManual = dispProvider.isDispositivoManual('Área de Ventas');
@@ -293,6 +303,7 @@ class _LightingModuleState extends State<LightingModule> {
               hasAutoMode: true,
               isAutoMode: !ventasManual,
               isDark: isDark,
+              isAuthorized: isAuthorized,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Área de Ventas', val);
               },
@@ -308,6 +319,7 @@ class _LightingModuleState extends State<LightingModule> {
               hasAutoMode: true,
               isAutoMode: !almacenManual,
               isDark: isDark,
+              isAuthorized: isAuthorized,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Almacén', val);
               },
@@ -322,6 +334,7 @@ class _LightingModuleState extends State<LightingModule> {
               isOn: cajaOn,
               hasAutoMode: false,
               isDark: isDark,
+              isAuthorized: isAuthorized,
               onToggle: (val) {
                 dispProvider.toggleDispositivo('Caja/Oficina', val);
               },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/dispositivos_provider.dart';
+import '../providers/auth_provider.dart';
 
 class SecurityModule extends StatelessWidget {
   const SecurityModule({super.key});
@@ -10,7 +11,9 @@ class SecurityModule extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final dispProvider = Provider.of<DispositivosProvider>(context);
+    final authP = Provider.of<AuthProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final isAuthorized = authP.canAccess('Seguridad');
 
     final isArmed = dispProvider.isDispositivoOn('Cerradura Electrónica');
     final isManual = dispProvider.isDispositivoManual('Cerradura Electrónica');
@@ -42,25 +45,28 @@ class SecurityModule extends StatelessWidget {
                   ),
                 ),
                 Opacity(
-                  opacity: isAutoMode ? 0.5 : 1.0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF0F172A).withValues(alpha: 0.5)
-                          : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Switch(
-                      value: isArmed,
-                      onChanged: isAutoMode
-                          ? null
-                          : (val) {
-                              dispProvider.toggleDispositivo(
-                                'Cerradura Electrónica',
-                                val,
-                              );
-                            },
-                      activeThumbColor: Colors.redAccent,
+                  opacity: (isAutoMode || !isAuthorized) ? 0.5 : 1.0,
+                  child: Tooltip(
+                    message: !isAuthorized ? "Acceso restringido para su rol" : "",
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                            : Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Switch(
+                        value: isArmed,
+                        onChanged: (isAutoMode || !isAuthorized)
+                            ? null
+                            : (val) {
+                                dispProvider.toggleDispositivo(
+                                  'Cerradura Electrónica',
+                                  val,
+                                );
+                              },
+                        activeThumbColor: Colors.redAccent,
+                      ),
                     ),
                   ),
                 ),

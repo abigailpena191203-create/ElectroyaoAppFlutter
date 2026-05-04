@@ -58,17 +58,42 @@ class SeguridadProvider with ChangeNotifier {
   }
 
   Future<void> _cargarUsuarios() async {
-    try {
-      final response = await _client
-          .from('t_usuarios')
-          .select()
-          .order('nombre', ascending: true);
-      _usuarios = (response as List<dynamic>)
-          .map((item) => Usuario.fromJson(item as Map<String, dynamic>))
-          .toList();
-    } catch (e) {
-      // Error silencioso
-    }
+    // Implementación Frontend-First: Usar MockData
+    await Future.delayed(const Duration(milliseconds: 500)); // Simular latencia
+    _usuarios = [
+      Usuario(
+        id: '1',
+        nombre: 'Abigail Peña',
+        email: 'abigail.p@electroyao.com',
+        rol: 'Administrador',
+        estado: 'Activo',
+        fechaRegistro: DateTime.now().subtract(const Duration(days: 120)),
+      ),
+      Usuario(
+        id: '2',
+        nombre: 'Carlos Ruiz',
+        email: 'carlos.r@electroyao.com',
+        rol: 'Ventas',
+        estado: 'Activo',
+        fechaRegistro: DateTime.now().subtract(const Duration(days: 60)),
+      ),
+      Usuario(
+        id: '3',
+        nombre: 'Elena Silva',
+        email: 'elena.s@electroyao.com',
+        rol: 'Seguridad',
+        estado: 'Activo',
+        fechaRegistro: DateTime.now().subtract(const Duration(days: 45)),
+      ),
+      Usuario(
+        id: '4',
+        nombre: 'Mario López',
+        email: 'mario.l@electroyao.com',
+        rol: 'Ventas',
+        estado: 'Bloqueado',
+        fechaRegistro: DateTime.now().subtract(const Duration(days: 15)),
+      ),
+    ];
   }
 
   void _suscribirRealtime() {
@@ -98,28 +123,20 @@ class SeguridadProvider with ChangeNotifier {
 
     final nuevoEstado =
         _usuarios[idx].isActive ? 'Bloqueado' : 'Activo';
-    try {
-      await _client
-          .from('t_usuarios')
-          .update({'estado': nuevoEstado})
-          .eq('id', usuarioId)
-          .select()
-          .single();
-
-      // Actualización optimista local (no hay Realtime en usuarios)
-      final u = _usuarios[idx];
-      _usuarios[idx] = Usuario(
-        id: u.id,
-        nombre: u.nombre,
-        email: u.email,
-        rol: u.rol,
-        estado: nuevoEstado,
-        fechaRegistro: u.fechaRegistro,
-      );
-      notifyListeners();
-    } catch (e) {
-      // Error silencioso
-    }
+    
+    // Simular retraso de red para la maqueta
+    await Future.delayed(const Duration(milliseconds: 300));
+    
+    final u = _usuarios[idx];
+    _usuarios[idx] = Usuario(
+      id: u.id,
+      nombre: u.nombre,
+      email: u.email,
+      rol: u.rol,
+      estado: nuevoEstado,
+      fechaRegistro: u.fechaRegistro,
+    );
+    notifyListeners();
   }
 
   /// Cambiar el rol de un usuario
@@ -128,27 +145,19 @@ class SeguridadProvider with ChangeNotifier {
     final idx = _usuarios.indexWhere((u) => u.id == usuarioId);
     if (idx == -1) return;
 
-    try {
-      await _client
-          .from('t_usuarios')
-          .update({'rol': nuevoRol})
-          .eq('id', usuarioId)
-          .select()
-          .single();
+    // Simular retraso de red para la maqueta
+    await Future.delayed(const Duration(milliseconds: 300));
 
-      final u = _usuarios[idx];
-      _usuarios[idx] = Usuario(
-        id: u.id,
-        nombre: u.nombre,
-        email: u.email,
-        rol: nuevoRol,
-        estado: u.estado,
-        fechaRegistro: u.fechaRegistro,
-      );
-      notifyListeners();
-    } catch (e) {
-      // Error silencioso
-    }
+    final u = _usuarios[idx];
+    _usuarios[idx] = Usuario(
+      id: u.id,
+      nombre: u.nombre,
+      email: u.email,
+      rol: nuevoRol,
+      estado: u.estado,
+      fechaRegistro: u.fechaRegistro,
+    );
+    notifyListeners();
   }
 
   @override
