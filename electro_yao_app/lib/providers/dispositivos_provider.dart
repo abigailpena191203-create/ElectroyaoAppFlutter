@@ -17,6 +17,7 @@ class DispositivosProvider with ChangeNotifier {
   void _initStream() async {
     // 1. Obtener estado inicial (Carga inicial síncrona)
     try {
+      final response = await _client.from('t_dispositivos').select();
       _dispositivos = (response as List<dynamic>).map((item) {
         return Dispositivo.fromJson(item as Map<String, dynamic>);
       }).toList();
