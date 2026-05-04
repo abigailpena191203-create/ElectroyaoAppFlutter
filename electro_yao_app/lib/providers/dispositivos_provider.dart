@@ -52,8 +52,8 @@ class DispositivosProvider with ChangeNotifier {
         } catch (e) {
           // Error silencioso
         }
-      },
-    }).subscribe((status, [error]) {
+      }
+    ).subscribe((status, [error]) {
       // Suscripción silenciosa
     });
   }
