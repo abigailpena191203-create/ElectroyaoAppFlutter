@@ -101,7 +101,7 @@ class ReportesScreen extends StatelessWidget {
                           case 5: text = 'Jun'; break;
                           default: text = ''; break;
                         }
-                        return SideTitleWidget(axisSide: meta.axisSide, child: Text(text, style: style));
+                        return SideTitleWidget(meta: meta, child: Text(text, style: style));
                       },
                     ),
                   ),
@@ -111,7 +111,7 @@ class ReportesScreen extends StatelessWidget {
                       reservedSize: 40,
                       getTitlesWidget: (value, meta) {
                         final style = TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: isDark ? Colors.white70 : Colors.black54);
-                        return SideTitleWidget(axisSide: meta.axisSide, child: Text(value.toInt().toString(), style: style));
+                        return SideTitleWidget(meta: meta, child: Text(value.toInt().toString(), style: style));
                       }
                     ),
                   ),
